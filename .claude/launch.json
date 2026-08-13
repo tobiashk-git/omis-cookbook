@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cookbook",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8137", "--directory", "C:/Users/tobia/Omi's cookbook/site"],
+      "port": 8137
+    }
+  ]
+}
