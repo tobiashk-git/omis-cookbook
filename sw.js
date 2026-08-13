@@ -1,5 +1,6 @@
-/* Service worker: cache the app shell + recipe assets for offline use. */
-const CACHE = 'omis-cookbook-v1';
+/* Service worker: network-first for the app (so updates appear on reload),
+   cache-first for photos (immutable, fast offline). */
+const CACHE = 'omis-cookbook-v2';
 const SHELL = [
   './', './index.html', './styles.css', './app.js',
   './data/recipes.json', './manifest.webmanifest',
@@ -18,12 +19,26 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
-  // cache-first, fall back to network then cache the result (good for photos)
+  const isImage = req.destination === 'image' || /\.(jpg|jpeg|png|svg|webp)$/i.test(new URL(req.url).pathname);
+
+  if (isImage) {
+    // cache-first: photos don't change
+    e.respondWith(
+      caches.match(req).then(hit => hit || fetch(req).then(res => {
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {});
+        return res;
+      }))
+    );
+    return;
+  }
+
+  // network-first for app shell + data: always try the latest, fall back to cache offline
   e.respondWith(
-    caches.match(req).then(hit => hit || fetch(req).then(res => {
+    fetch(req).then(res => {
       const copy = res.clone();
       caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {});
       return res;
-    }).catch(() => hit))
+    }).catch(() => caches.match(req).then(hit => hit || caches.match('./index.html')))
   );
 });
