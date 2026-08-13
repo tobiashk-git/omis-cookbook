@@ -14,6 +14,21 @@ Barbara Keuneke. 69 recipes and 99 family photos digitised from the original PDF
 
 Your additions and edits are saved on your device (IndexedDB) — Omi's original recipes are always kept.
 
+## Live site
+**https://tobiashk-git.github.io/omis-cookbook/** (GitHub Pages, repo `tobiashk-git/omis-cookbook`).
+
+### Install on iPhone
+Open the link in **Safari** → Share button → **Add to Home Screen**. It then opens like an app and works offline.
+
+### Updating the live site
+Edit files in this folder, then:
+```bash
+git add -A
+git commit -m "what changed"
+git push
+```
+GitHub Pages rebuilds in about a minute. The app is network-first, so a normal reload shows your changes.
+
 ## Run locally
 From this `site/` folder:
 
